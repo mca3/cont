@@ -13,7 +13,7 @@ doc: doc/contm.1
 doc/%: doc/%.scd
 	scdoc < $^ > $@
 
-contm/contm: contm/main.o
+contm/contm: contm/main.o contm/util.o contm/container.o
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $^
 
 .PHONY: clean
