@@ -1,4 +1,7 @@
 *.o
+/_install
+/contc/contc
 /contm/contm
 /doc/*.1
 /root
+TODO
