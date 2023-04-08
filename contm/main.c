@@ -12,16 +12,10 @@
 void
 usage(char *argv0)
 {
-	fprintf(stderr, "usage: %s [-imnprU] [-u hostname] [-R root] command [args...]\n"
-			"-i		New IPC namespace\n"
-			"-m		New mount namespace\n"
+	fprintf(stderr, "usage: %s [-n] [-u hostname] [-R root] command [args...]\n"
 			"-n		New network namespace\n"
-			"-p		New PID namespace\n"
-			"-r		Map the current UID and GID to 0.\n"
 			"-u <hostname>	New UTS namespace\n"
-			"-R <dir>	Root of container\n"
-			"-U		New user namespace (needed if not UID 0)\n"
-			"		Implies -r.\n",
+			"-R <dir>	Root of container\n",
 			argv0);
 	exit(EXIT_FAILURE);
 }
@@ -29,23 +23,23 @@ usage(char *argv0)
 int
 main(int argc, char *argv[])
 {
-	int flags = 0, map_root = 0, opt;
+	int flags = 0, map_root = 1, opt;
 	char *hostname = NULL;
 	pid_t child;
 	struct child_args args = {0};
 	char buf[512];
 	char realroot[PATH_MAX];
 
-	while ((opt = getopt(argc, argv, "imnpru:R:U")) != -1) {
+	// Default flags for containers.
+	// It didn't make much sense for any of these flags to not be set as
+	// default.
+	flags |= CLONE_NEWIPC | CLONE_NEWNS | CLONE_NEWPID | CLONE_NEWUSER;
+
+	while ((opt = getopt(argc, argv, "nu:R:")) != -1) {
 		switch (opt) {
-		case 'i': flags |= CLONE_NEWIPC; break;
-		case 'm': flags |= CLONE_NEWNS; break;
 		case 'n': flags |= CLONE_NEWNET; break;
-		case 'p': flags |= CLONE_NEWPID; break;
-		case 'r': map_root = 1; break;
 		case 'u': flags |= CLONE_NEWUTS; args.hostname = optarg; break;
 		case 'R': args.root = realpath(optarg, realroot); break;
-		case 'U': flags |= CLONE_NEWUSER; map_root = 1; break;
 		default: usage(argv[0]);
 		}
 
