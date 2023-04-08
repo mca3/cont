@@ -212,7 +212,7 @@ main(int argc, char *argv[])
 		case 'r': map_root = 1; break;
 		case 'u': flags |= CLONE_NEWUTS; args.hostname = optarg; break;
 		case 'R': args.root = realpath(optarg, realroot); break;
-		case 'U': flags |= CLONE_NEWUSER; break;
+		case 'U': flags |= CLONE_NEWUSER; map_root = 1; break;
 		default: usage(argv[0]);
 		}
 

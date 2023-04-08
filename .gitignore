@@ -1,2 +1,4 @@
 *.o
 /contm/contm
+/doc/*.1
+/root
